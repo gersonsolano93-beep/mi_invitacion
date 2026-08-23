@@ -6,7 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <!-- Metadatos Open Graph para la vista previa en WhatsApp -->
   <meta property="og:title" content="Pase VIP - Revelación de Sexo 👶✨">
-  <meta property="og:description" content="¿Niño o Niña? Ingresa para ver tu pase oficial y registrar tu voto.">
+  <meta property="og:description"
+    content="¿Niño o Niña? Ingresa para ver tu pase oficial, votar y abrir tu regalo asignado.">
   <meta property="og:image" content="https://fonts.gstatic.com/s/e/notoemoji/latest/1f37c/512.png">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="512">
@@ -171,7 +172,6 @@
       }
     }
 
-    /* Pop effect animation */
     .bubble-pop {
       animation: popEffect 0.3s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
@@ -190,6 +190,74 @@
       100% {
         transform: scale(0);
         opacity: 0;
+      }
+    }
+
+    /* Gift Box Animations */
+    .gift-shake {
+      animation: giftShakeAnim 0.3s ease-in-out;
+    }
+
+    @keyframes giftShakeAnim {
+      0% {
+        transform: rotate(0deg) scale(1);
+      }
+
+      20% {
+        transform: rotate(-12deg) scale(1.1);
+      }
+
+      40% {
+        transform: rotate(12deg) scale(1.15);
+      }
+
+      60% {
+        transform: rotate(-8deg) scale(1.1);
+      }
+
+      80% {
+        transform: rotate(8deg) scale(1.05);
+      }
+
+      100% {
+        transform: rotate(0deg) scale(1);
+      }
+    }
+
+    .gift-bounce {
+      animation: giftBounceAnim 1.8s infinite ease-in-out;
+    }
+
+    @keyframes giftBounceAnim {
+
+      0%,
+      100% {
+        transform: translateY(0) scale(1);
+      }
+
+      50% {
+        transform: translateY(-10px) scale(1.03);
+      }
+    }
+
+    .gift-reveal-bounce {
+      animation: giftRevealAnim 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes giftRevealAnim {
+      0% {
+        transform: scale(0.2) rotate(-15deg);
+        opacity: 0;
+      }
+
+      70% {
+        transform: scale(1.1) rotate(5deg);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
       }
     }
   </style>
@@ -228,8 +296,7 @@
         </div>
         <h2 class="font-title text-2xl text-gray-800 mb-2">¡Desbloquea tu Invitación!</h2>
         <p class="text-xs text-gray-600 mb-4 leading-relaxed font-semibold">
-          Explota <span class="text-pink-600 font-bold">3 burbujas mágicas</span> para activar la música suave de fondo
-          y abrir tu tarjeta VIP 🍼✨
+          Explota <span class="text-pink-600 font-bold">3 burbujas mágicas ✨</span>
         </p>
 
         <!-- Mini Game Play Area Container -->
@@ -251,6 +318,89 @@
           <span>✨</span>
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- 5-CLICK GIFT REVEAL MODAL -->
+  <div id="giftRevealModal"
+    class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 transition-all duration-300">
+    <div
+      class="glass-card max-w-sm w-full p-6 rounded-3xl text-center shadow-2xl border-4 border-white relative overflow-hidden">
+
+      <!-- Ambient Glow Header -->
+      <div id="giftGlowBg"
+        class="absolute -top-16 -left-16 w-48 h-48 bg-amber-200/60 rounded-full blur-2xl pointer-events-none"></div>
+
+      <!-- State 1: Locked Gift (Requires 5 Clicks) -->
+      <div id="giftLockedState" class="relative z-10 flex flex-col items-center">
+        <div
+          class="inline-block bg-amber-100 text-amber-800 border border-amber-300 px-3 py-1 rounded-full text-xs font-bold mb-3 shadow-sm uppercase tracking-wide">
+          🎁 Regalo Sorpresa Asignado
+        </div>
+        <h2 class="font-title text-2xl text-gray-800 mb-1">¡Abre tu Regalo!</h2>
+        <p class="text-xs text-gray-600 mb-4 font-semibold">
+          Haz <span class="text-pink-600 font-bold">5 clics</span> en el regalo para descubrir lo que te tocó llevar.
+        </p>
+
+        <!-- Interactive Gift Box Container -->
+        <div onclick="clickRegalo()"
+          class="my-2 cursor-pointer group flex flex-col items-center justify-center p-4 rounded-3xl bg-gradient-to-b from-amber-50 to-pink-50 border-2 border-dashed border-amber-300/80 hover:border-amber-400 transition-all active:scale-95 shadow-inner w-full max-w-[220px]">
+
+          <div id="giftBoxIcon"
+            class="text-7xl sm:text-8xl select-none transition-transform gift-bounce filter drop-shadow-md">
+            🎁
+          </div>
+
+          <p class="text-[11px] text-amber-700 font-bold mt-2 bg-white/80 px-3 py-1 rounded-full shadow-sm">
+            👇 ¡Toca aquí repetidamente!
+          </p>
+        </div>
+
+        <!-- Tap Progress Bar & Counter -->
+        <div class="w-full mt-4 px-2">
+          <div class="flex justify-between items-center text-xs font-bold text-gray-700 mb-1">
+            <span>Toques necesarios:</span>
+            <span id="giftClickCounter" class="font-title text-amber-600 text-sm">0 / 5 📦</span>
+          </div>
+          <div class="w-full bg-gray-200 h-3.5 rounded-full overflow-hidden p-0.5 border border-gray-300">
+            <div id="giftProgressBar"
+              class="bg-gradient-to-r from-amber-400 via-pink-400 to-purple-500 h-full rounded-full transition-all duration-200 w-0">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- State 2: Revealed Gift (Appears after 5 clicks) -->
+      <div id="giftUnlockedState" class="hidden relative z-10 flex flex-col items-center gift-reveal-bounce">
+        <div
+          class="inline-block bg-emerald-100 text-emerald-800 border border-emerald-300 px-3 py-1 rounded-full text-xs font-bold mb-2 shadow-sm uppercase tracking-wide">
+          🎉 ¡Regalo Desbloqueado!
+        </div>
+        <h2 class="font-title text-2xl text-emerald-900 mb-1">¡Te Tocó Llevar!</h2>
+        <p id="giftRevealedSubtext" class="text-xs text-gray-600 mb-4 font-semibold">
+          Gracias por acompañarnos en este día tan especial
+        </p>
+
+        <div
+          class="w-full p-5 bg-gradient-to-br from-emerald-50 via-teal-50 to-emerald-100 border-2 border-emerald-300 rounded-2xl shadow-md my-1 text-center">
+          <div id="giftRevealedIcon" class="text-6xl mb-2 filter drop-shadow">
+            🗳️
+          </div>
+          <h3 id="giftRevealedTitle" class="font-title text-xl text-emerald-900 leading-tight">
+            Toallitas Húmedas 🗳️
+          </h3>
+          <p id="giftRevealedTeamBadge" class="text-xs text-emerald-700 font-bold mt-1">
+            Asignado por tu voto para Niño 👦
+          </p>
+        </div>
+
+        <button onclick="cerrarModalRegalo()"
+          class="shimmer w-full mt-5 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-title text-sm rounded-2xl shadow-lg active:scale-95 transition flex items-center justify-center gap-2">
+          <span>Ver mi Pase y Detalles</span>
+          <span>✨</span>
+        </button>
+      </div>
+
     </div>
   </div>
 
@@ -281,6 +431,7 @@
         <p class="text-xs text-gray-500 mt-1 font-semibold">¿Niño o Niña? ¡Descubre tu Pase Oficial!</p>
       </div>
 
+      <!-- Step 1: Login -->
       <div id="step-login" class="space-y-4 transition-all duration-300">
         <div class="bg-gradient-to-br from-pink-50 to-blue-50 p-4 rounded-2xl border border-pink-200/60 shadow-inner">
           <label class="block text-xs font-bold text-gray-600 mb-2 uppercase tracking-wider">
@@ -310,6 +461,7 @@
         </div>
       </div>
 
+      <!-- Step Custom Name -->
       <div id="step-custom-name" class="hidden space-y-4">
         <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200 text-left">
           <p class="text-xs text-amber-800 font-semibold mb-2">✨ ¡Creemos tu Pase Especial!</p>
@@ -322,6 +474,7 @@
         </button>
       </div>
 
+      <!-- VIP Badge Component -->
       <div id="vip-badge" class="hidden my-4 relative">
         <div
           class="bg-gradient-to-br from-amber-50 via-white to-pink-50 border-2 border-goldvip rounded-2xl p-4 shadow-md relative overflow-hidden">
@@ -369,34 +522,51 @@
         </div>
       </div>
 
+      <!-- Step 2: Gender Intuition Voting -->
       <div id="step-game" class="hidden space-y-4">
         <div class="bg-gradient-to-r from-blue-50 to-pink-50 p-3.5 rounded-2xl border border-purple-100">
           <p class="font-title text-base text-purple-900 mb-1">¿Cuál es tu intuición?</p>
-          <p class="text-xs text-gray-600 mb-3">Vota para registrar tu apuesta en el tablero en vivo</p>
+          <p class="text-xs text-gray-600 mb-3">Selecciona tu opción para descubrir tu regalo asignado 🎁</p>
 
           <div class="grid grid-cols-2 gap-3">
             <button onclick="votar('Niño 🩵')"
               class="glow-blue group relative p-4 bg-gradient-to-b from-bebeblue to-sky-300 hover:from-sky-300 hover:to-sky-400 text-sky-900 font-title rounded-2xl shadow-md active:scale-95 transition-all overflow-hidden border-2 border-white">
               <div class="text-3xl mb-1 group-hover:scale-125 transition-transform">👶🏻🩵</div>
               <div class="text-sm">¡Es NIÑO!</div>
-              <div class="text-[10px] opacity-80 mt-0.5 font-sans">Equipo Azul</div>
+              <div class="text-[10px] opacity-80 mt-0.5 font-sans">Llevarás: Toallitas 🗳️</div>
             </button>
 
             <button onclick="votar('Niña 🩷')"
               class="glow-pink group relative p-4 bg-gradient-to-b from-bebepink to-rose-300 hover:from-rose-300 hover:to-rose-400 text-rose-900 font-title rounded-2xl shadow-md active:scale-95 transition-all overflow-hidden border-2 border-white">
               <div class="text-3xl mb-1 group-hover:scale-125 transition-transform">👶🏼🩷</div>
               <div class="text-sm">¡Es NIÑA!</div>
-              <div class="text-[10px] opacity-80 mt-0.5 font-sans">Equipo Rosado</div>
+              <div class="text-[10px] opacity-80 mt-0.5 font-sans">Llevarás: Pañal 📦</div>
             </button>
           </div>
         </div>
       </div>
 
+      <!-- Step 3: Confirmation and Event Details -->
       <div id="step-details" class="hidden space-y-4 text-left">
         <!-- Voted notification badge -->
         <div class="bg-purple-100 border border-purple-300 text-purple-900 p-3 rounded-2xl text-center shadow-inner">
           <span class="text-xs uppercase font-bold tracking-wider block text-purple-600">Tu Voto Registrado:</span>
           <span id="voto-res" class="font-title text-xl text-purple-900"></span>
+        </div>
+
+        <!-- Assigned Gift Card Display (Automated based on choice) -->
+        <div
+          class="bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-emerald-300 rounded-2xl p-3.5 text-xs text-emerald-900 shadow-sm flex items-center gap-3">
+          <div id="summaryGiftIcon" class="text-3xl p-2 bg-emerald-100 rounded-xl border border-emerald-200">
+            🎁
+          </div>
+          <div>
+            <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider block">Tu Regalo Asignado para
+              llevar:</span>
+            <span id="summaryGiftTitle" class="font-title text-base text-emerald-950 block leading-tight">
+              -
+            </span>
+          </div>
         </div>
 
         <!-- Live Votes Gauge -->
@@ -440,7 +610,7 @@
         <div class="bg-gray-50 rounded-2xl p-3.5 space-y-2 border border-gray-200 text-xs">
           <div class="flex items-center gap-2 text-gray-700">
             <span class="text-base">📅</span>
-            <div><strong>Fecha:</strong> Sábado, 20 de Septiembre</div>
+            <div><strong>Fecha:</strong> Viernes, 04 de Septiembre</div>
           </div>
           <div class="flex items-center gap-2 text-gray-700">
             <span class="text-base">⏰</span>
@@ -448,29 +618,11 @@
           </div>
           <div class="flex items-center gap-2 text-gray-700">
             <span class="text-base">📍</span>
-            <div><strong>Lugar:</strong> Salón de Eventos "Los Arcos"</div>
+            <div><strong>Lugar:</strong> Barrio San Jose</div>
           </div>
           <div class="flex items-center gap-2 text-gray-700">
             <span class="text-base">👩‍❤️‍👨</span>
             <div><strong>Futuros Padres:</strong> Virginia Yemilet & Gerson Jesús</div>
-          </div>
-        </div>
-
-        <!-- Gift suggestion interactive selector -->
-        <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-3.5 text-xs text-emerald-900 space-y-2">
-          <div class="flex items-center gap-2 font-bold text-emerald-800">
-            <span class="text-base">🎁</span>
-            <span>Tu Regalo Sugerido (Selecciona uno):</span>
-          </div>
-          <div class="grid grid-cols-2 gap-2 pt-1">
-            <button type="button" onclick="selectGift('Pañales 📦')" id="gift-panales"
-              class="gift-opt p-2 bg-white rounded-xl border-2 border-emerald-300 font-semibold text-center hover:bg-emerald-100 transition shadow-sm">
-              Pañales 📦
-            </button>
-            <button type="button" onclick="selectGift('Toallitas Húmedas 🧻')" id="gift-toallitas"
-              class="gift-opt p-2 bg-white rounded-xl border-2 border-transparent font-semibold text-center hover:bg-emerald-100 transition shadow-sm">
-              Toallitas Húmedas 🧻
-            </button>
           </div>
         </div>
 
@@ -483,7 +635,7 @@
 
         <!-- Re-vote button -->
         <button onclick="reiniciarVoto()" class="w-full text-center text-[11px] text-gray-400 hover:underline">
-          🔄 Cambiar mi voto o consultar otro documento
+          🔄 Cambiar mi voto!
         </button>
       </div>
 
@@ -503,7 +655,7 @@
 
     function startBackgroundMusic() {
       if (!musicPlaying) {
-        bgAudio.volume = 0.25; // Soft background music level
+        bgAudio.volume = 0.25;
         bgAudio.play().then(() => {
           musicPlaying = true;
           updateAudioButton(true);
@@ -539,7 +691,7 @@
       }
     }
 
-    // Sound Synthesizer for pop sound effects
+    // Sound Synthesizer for pop/tap sound effects
     function playTone(freq, type, duration, delay = 0) {
       try {
         if (!audioCtx) {
@@ -572,6 +724,11 @@
     function playPopSound() {
       playTone(523.25, 'sine', 0.1, 0); // C5
       playTone(659.25, 'sine', 0.12, 50); // E5
+    }
+
+    function playTapSound(pitchMultiplier = 1) {
+      playTone(400 * pitchMultiplier, 'sine', 0.08, 0);
+      playTone(550 * pitchMultiplier, 'triangle', 0.08, 30);
     }
 
     function playFanfare() {
@@ -639,7 +796,6 @@
       const container = document.getElementById('bubbleBox');
       container.innerHTML = '';
 
-      // Spawn initial set of bubbles
       for (let i = 0; i < 4; i++) {
         spawnGameBubble();
       }
@@ -647,7 +803,7 @@
 
     function completarJuego() {
       playFanfare();
-      startBackgroundMusic(); // Start soft background music on user interaction
+      startBackgroundMusic();
 
       confetti({
         particleCount: 50,
@@ -656,7 +812,6 @@
         colors: ['#f8bbd0', '#b3e5fc', '#d4af37']
       });
 
-      // Smoothly hide mini game modal
       const modal = document.getElementById('welcomeGameModal');
       modal.style.opacity = '0';
       modal.style.pointerEvents = 'none';
@@ -695,14 +850,41 @@
        4. GUEST DATABASE & APP STATE
        =================================================================== */
     const invitados = {
-      "25888371": { nombre: "Virginia Orellana", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1535088043772354600/Virginia_y_Gerson.png?ex=6a767da6&is=6a752c26&hm=0a8b78fbe71566205729fa922ed3a1996ae8880d4e379d490fdfdcd98ca5944d&" },
-      "87654321": { nombre: "María Gómez", foto: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80" },
+      "13639034": { nombre: "Maria Eugenia Garrido", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1539107798418202624/Maria_Eugenia.jpeg?ex=6a851d56&is=6a83cbd6&hm=1ced0bd26177766a28bc054208312a5581583836ccf61b6068488e743e526b9f&" },
+      "11243818": { nombre: "Gabriela I. Nieves", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1539107797298454648/Gabriela.png?ex=6a851d56&is=6a83cbd6&hm=7923223a0425a43cd20df43824600f32b1901616f0ca7f9fb1d60cc0c4f6dbad&" },
+      "14219745": { nombre: "Andreina Gonzalez", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1539107796245680198/Andreina.jpeg?ex=6a851d55&is=6a83cbd5&hm=eaff805422ebdad9b6f5f2b92676393b8fa689667329924420c961387769baef&" },
+      "11241903": { nombre: "Luisa Mendez", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1540889242547261480/Mujer.png?ex=6a8b986f&is=6a8a46ef&hm=ae78c60e5e88455d3fb891733e6734289a9a138bf40730a8098aa5f95d6dfc81&" },
+      "17607716": { nombre: "Angel Puglisi", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1539107798162341968/Puglisi.jpeg?ex=6a851d56&is=6a83cbd6&hm=f2d1fc7996996a4b5d6236795ba34e294060da65f788e5d132c1f4cd18b2304c&" },
+      "20231499": { nombre: "Redy Salas", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1539107798669856880/Redy_Salas.jpeg?ex=6a851d56&is=6a83cbd6&hm=99201f583ebf2e3e6c81c1aaeefbc1aca39cda1cea68a5d5d4552ec679760e18&" },
+      "26133359": { nombre: "Ezequiel Barrios", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1539107797701230642/Ezequiel_Barrios.png?ex=6a851d56&is=6a83cbd6&hm=9497d2c8a4b1b0ee9891b4daf737358c520b1832ae1425f7a7246d32c1c7fd23&" },
+      "25260400": { nombre: "Deivis Ojeda y Esposa", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1540896955029258360/Deivis.png?ex=6a8b9f9e&is=6a8a4e1e&hm=81a96d1d1d5120969c0d1912e671d4d70648c0740c7d40424ccd9dbb12233578&" },
+      "26873549": { nombre: "Jose Daniel Ojeda", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1540909768581845103/Daniel.png?ex=6a8bab8d&is=6a8a5a0d&hm=7dcb8dda1e76824441aa9540ed2a58ecc7e40e947958080acff8ade5e95e0bf9&" },
+      "30650018": { nombre: "Alex Reyes; El Darkafenix el Rey de los Palas", foto: "https://imgur.com/HPs04wy" },
+      "24737119": { nombre: "Jesus Pacheco Salas", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1539107795863994478/pacheco.png?ex=6a851d55&is=6a83cbd5&hm=72f08de6802e569cca921f790636d5f852df570c4da6a9cf1a49f1c16017c938&" },
+      "13312446": { nombre: "Juan Garrido", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1539107796664983682/Zhandai1.jpeg?ex=6a851d55&is=6a83cbd5&hm=eb5638b38cd8b92c90794a2eb05563060f5e577cde1908fe1a8a78d3fb7a9db3&" },
+      "10616639": { nombre: "Solibert Aponte", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1540889242547261480/Mujer.png?ex=6a8b986f&is=6a8a46ef&hm=ae78c60e5e88455d3fb891733e6734289a9a138bf40730a8098aa5f95d6dfc81&" },
+      "19406140": { nombre: "Diana Artahona", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1540889242547261480/Mujer.png?ex=6a8b986f&is=6a8a46ef&hm=ae78c60e5e88455d3fb891733e6734289a9a138bf40730a8098aa5f95d6dfc81&" },
+      "24103402": { nombre: "Wuilmary Martínez", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1540889242547261480/Mujer.png?ex=6a8b986f&is=6a8a46ef&hm=ae78c60e5e88455d3fb891733e6734289a9a138bf40730a8098aa5f95d6dfc81&" },
+      "14520231": { nombre: "Saray Rodríguez", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1540889242547261480/Mujer.png?ex=6a8b986f&is=6a8a46ef&hm=ae78c60e5e88455d3fb891733e6734289a9a138bf40730a8098aa5f95d6dfc81&" },
+      "19405264": { nombre: "Denny Flores", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1540889242547261480/Mujer.png?ex=6a8b986f&is=6a8a46ef&hm=ae78c60e5e88455d3fb891733e6734289a9a138bf40730a8098aa5f95d6dfc81&" },
+      "26714884": { nombre: "Karla Padrón", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1540889242547261480/Mujer.png?ex=6a8b986f&is=6a8a46ef&hm=ae78c60e5e88455d3fb891733e6734289a9a138bf40730a8098aa5f95d6dfc81&" },
+      "12327390": { nombre: "Kristhal Veliz", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1540889242547261480/Mujer.png?ex=6a8b986f&is=6a8a46ef&hm=ae78c60e5e88455d3fb891733e6734289a9a138bf40730a8098aa5f95d6dfc81&" },
+      "19918009": { nombre: "Eumary Orellana", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1541099508899782686/Mary.jpeg?ex=6a8c5c43&is=6a8b0ac3&hm=6c9849f4a539c60e89c43baf9fb1c54939118896742f5ea0f76df337aab4f280&" },
+      "30595097": { nombre: "Maria Virginia España", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1540889242903904356/Maria.png?ex=6a8b986f&is=6a8a46ef&hm=624f9e5f7665ea3c08381813349d01273600399cd326299e6d0f5442243ffddc&" },
+      "31376956": { nombre: "Luisa Maria Orellana", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1540894772586352770/Luisa_Maria.png?ex=6a8b9d96&is=6a8a4c16&hm=d3fd76237caa22519c2b90727f6a463e68cb4dcef173e98f4fabaae2be53e406&" },
+      "31376955": { nombre: "Eugenia Orellana", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1540894771948814387/Eugenia.png?ex=6a8b9d96&is=6a8a4c16&hm=78118998e977ba645db45e2fc4e3411c16a38e64d8b797d1a5654624c6613fa9&" },
+      "15998992": { nombre: "Yetzileth Orellana", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1541099508555841628/Lele.jpeg?ex=6a8c5c43&is=6a8b0ac3&hm=04e5fa6d876d28a51e021bd9c02443649b0bbf9f61789935b7a33aba384ed7ab&" },
+      "5943636": { nombre: "Virgilio Antonio Orellana", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1541100202868478112/Virgilio.jpeg?ex=6a8c5ce8&is=6a8b0b68&hm=2adc48fbb827bb27138f429c7b1d3a29f83c83dbb97e2c270ae2ea677ef80f84&" },
+      "31376957": { nombre: "Luis Jose Orellana", foto: "https://cdn.discordapp.com/attachments/1069688076122734612/1540894773299388416/Luis.png?ex=6a8b9d96&is=6a8a4c16&hm=9cc00b3529afbe0ca42b7b8c596d306b7ae2bc1dcfd57c3d730bdd6c5440cc72&" },
+      "25634474": { nombre: "♥ Deimar Ojeda y sus Bebes ♥", foto: "https://github.com/gersonsolano93-beep/mi_invitacion/blob/main/Deimar.jpeg?raw=true" },
       "11223344": { nombre: "Juan Rodríguez", foto: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80" }
     };
 
     let usuarioActual = null;
     let votoEleccion = "";
-    let regaloSeleccionado = "Pañales 📦";
+    let regaloSeleccionado = "";
+    let giftClickCount = 0;
+    const requiredGiftClicks = 5;
 
     function validarCedula() {
       playPopSound();
@@ -748,17 +930,14 @@
     }
 
     function cargarPaseVIP() {
-      // Set user details
       document.getElementById("user-name").innerText = usuarioActual.nombre;
       document.getElementById("user-img").src = usuarioActual.foto;
       document.getElementById("vipCode").innerText = "VIP-" + Math.floor(100000 + Math.random() * 900000);
 
-      // Transitions
       document.getElementById("step-login").classList.add("hidden");
       document.getElementById("vip-badge").classList.remove("hidden");
       document.getElementById("step-game").classList.remove("hidden");
 
-      // Confetti burst
       playFanfare();
       confetti({
         particleCount: 60,
@@ -768,29 +947,94 @@
       });
     }
 
+    /* ===================================================================
+       5. GENDER VOTING & 5-CLICK GIFT UNBOXING MINI GAME
+       =================================================================== */
     function votar(opcion) {
       votoEleccion = opcion;
-      playFanfare();
+      playPopSound();
 
+      // Determine gift assignment based on gender selection:
+      // Niño -> Toallitas Húmedas 🗳️ | Niña -> Pañales 📦
       if (opcion.includes("Niño")) {
-        confetti({
-          particleCount: 120,
-          spread: 80,
-          colors: ['#b3e5fc', '#0288d1', '#ffffff', '#d4af37']
-        });
+        regaloSeleccionado = "Toallitas Húmedas 🗳️";
       } else {
-        confetti({
-          particleCount: 120,
-          spread: 80,
-          colors: ['#f8bbd0', '#e91e63', '#ffffff', '#d4af37']
-        });
+        regaloSeleccionado = "Pañales 📦";
       }
 
       document.getElementById("voto-res").innerText = opcion;
+      updateVoteGauge(opcion.includes("Niño"));
+
+      // Prepare 5-click Gift Reveal Modal
+      giftClickCount = 0;
+      updateGiftProgressUI();
+
+      document.getElementById("giftLockedState").classList.remove("hidden");
+      document.getElementById("giftUnlockedState").classList.add("hidden");
+
+      const modal = document.getElementById("giftRevealModal");
+      modal.classList.remove("hidden");
+    }
+
+    function clickRegalo() {
+      if (giftClickCount >= requiredGiftClicks) return;
+
+      giftClickCount++;
+      playTapSound(1 + (giftClickCount * 0.1));
+
+      // Shake animation effect on tap
+      const giftBox = document.getElementById("giftBoxIcon");
+      giftBox.classList.remove("gift-shake");
+      void giftBox.offsetWidth; // trigger reflow
+      giftBox.classList.add("gift-shake");
+
+      updateGiftProgressUI();
+
+      if (giftClickCount >= requiredGiftClicks) {
+        setTimeout(revelarRegaloFinal, 250);
+      }
+    }
+
+    function updateGiftProgressUI() {
+      document.getElementById("giftClickCounter").innerText = `${giftClickCount} / ${requiredGiftClicks} 📦`;
+      const percentage = (giftClickCount / requiredGiftClicks) * 100;
+      document.getElementById("giftProgressBar").style.width = `${percentage}%`;
+    }
+
+    function revelarRegaloFinal() {
+      playFanfare();
+
+      const isBoyGift = regaloSeleccionado.includes("Toallitas");
+
+      // Confetti burst corresponding to chosen gender gift
+      confetti({
+        particleCount: 100,
+        spread: 80,
+        origin: { y: 0.5 },
+        colors: isBoyGift ? ['#b3e5fc', '#0288d1', '#ffffff', '#d4af37'] : ['#f8bbd0', '#e91e63', '#ffffff', '#d4af37']
+      });
+
+      // Set revealed state content
+      document.getElementById("giftRevealedIcon").innerText = isBoyGift ? "📦" : "📦";
+      document.getElementById("giftRevealedTitle").innerText = regaloSeleccionado;
+      document.getElementById("giftRevealedTeamBadge").innerText = isBoyGift
+        ? "✨ Asignado por tu voto para Niño 👦"
+        : "✨ Asignado por tu voto para Niña 👧";
+
+      // Transition modal states
+      document.getElementById("giftLockedState").classList.add("hidden");
+      document.getElementById("giftUnlockedState").classList.remove("hidden");
+
+      // Update summary gift on details screen
+      document.getElementById("summaryGiftIcon").innerText = isBoyGift ? "📦" : "📦";
+      document.getElementById("summaryGiftTitle").innerText = regaloSeleccionado;
+    }
+
+    function cerrarModalRegalo() {
+      playPopSound();
+      document.getElementById("giftRevealModal").classList.add("hidden");
       document.getElementById("step-game").classList.add("hidden");
       document.getElementById("step-details").classList.remove("hidden");
-
-      updateVoteGauge(opcion.includes("Niño"));
     }
 
     function updateVoteGauge(isBoy) {
@@ -802,20 +1046,6 @@
       document.getElementById("barGirl").style.width = girlPct + "%";
     }
 
-    function selectGift(gift) {
-      playPopSound();
-      regaloSeleccionado = gift;
-      document.querySelectorAll('.gift-opt').forEach(btn => {
-        btn.classList.remove('border-emerald-300', 'bg-white');
-        btn.classList.add('border-transparent');
-      });
-      if (gift.includes('Pañales')) {
-        document.getElementById('gift-panales').classList.add('border-emerald-300');
-      } else {
-        document.getElementById('gift-toallitas').classList.add('border-emerald-300');
-      }
-    }
-
     function reiniciarVoto() {
       playPopSound();
       document.getElementById("step-details").classList.add("hidden");
@@ -825,16 +1055,16 @@
     function confirmarWhatsApp() {
       playPopSound();
       const telefonoPapa = "584243753877";
-      const mensaje = `¡Hola Virginia y Gerson! 👶✨\nSoy *${usuarioActual.nombre}* y confirmo mi asistencia a la Revelación de Sexo.\n\n🗳️ Mi apuesta: *${votoEleccion}*\n🎁 Regalo que llevaré: *${regaloSeleccionado}*\n\n¡Nos vemos pronto! 🎉`;
+      const mensaje = `¡Hola Virginia y Gerson! 👶✨\nSoy *${usuarioActual.nombre}* y confirmo mi asistencia a la Revelación de Sexo.\n\n🗳️ Mi apuesta: *${votoEleccion}*\n🎁 Regalo que me tocó llevar: *${regaloSeleccionado}*\n\n¡Nos vemos pronto! 🎉`;
       const url = `https://api.whatsapp.com/send?phone=${telefonoPapa}&text=${encodeURIComponent(mensaje)}`;
       window.open(url, '_blank');
     }
 
     /* ===================================================================
-       5. EVENT COUNTDOWN TIMER (20 Septiembre)
+       6. EVENT COUNTDOWN TIMER & 3D TILT EFFECT
        =================================================================== */
     function startCountdown() {
-      const eventDate = new Date("September 20, 2026 16:00:00").getTime();
+      const eventDate = new Date("September 4, 2026 16:00:00").getTime();
 
       setInterval(() => {
         const now = new Date().getTime();
@@ -874,5 +1104,4 @@
     };
   </script>
 </body>
-
 </html>
